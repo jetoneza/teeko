@@ -1,4 +1,4 @@
-use sdl2::event::Event;
+use sdl2::{event::Event, keyboard};
 
 mod view;
 use view::board_view;
@@ -34,6 +34,13 @@ fn main() -> Result<(), String> {
                     let row: usize = (5 * y / board_view.screen_area.h).try_into().unwrap();
 
                     game_state.handle_click(row, col);
+                }
+                Event::KeyDown { keycode, .. } => {
+                    if keycode.unwrap() == keyboard::Keycode::U {
+                        game_state.undo_action();
+                    } else if keycode.unwrap() == keyboard::Keycode::R {
+                        game_state.redo_action();
+                    }
                 }
                 _ => {}
             }
