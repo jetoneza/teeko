@@ -28,10 +28,6 @@ fn main() -> Result<(), String> {
         board: make_blank_board(),
     };
 
-    game_state.print_board();
-    game_state.jumble_board();
-    game_state.print_board();
-
     let mut running = true;
     let mut event_queue = sdl_context.event_pump().unwrap();
 
@@ -39,6 +35,12 @@ fn main() -> Result<(), String> {
         for event in event_queue.poll_iter() {
             match event {
                 Event::Quit { .. } => running = false,
+                Event::MouseButtonDown { x, y, .. } => {
+                    let col: usize = (5 * x / board_view.screen_area.w).try_into().unwrap();
+                    let row: usize = (5 * y / board_view.screen_area.h).try_into().unwrap();
+
+                    game_state.handle_click(row, col);
+                }
                 _ => {}
             }
         }
