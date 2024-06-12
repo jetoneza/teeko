@@ -5,13 +5,27 @@ use sdl2::{
     video::Window,
 };
 
+use crate::model::game::BoardPiece;
+
 pub struct Renderer {
     pub screen_area: Rect,
     pub clear_color: Color,
 }
 
 impl Renderer {
-    pub fn render(&self, canvas: &mut Canvas<Window>) {
+    pub fn render(&self, canvas: &mut Canvas<Window>, board: &[[BoardPiece; 5]; 5]) {
+        // Background
+        canvas.set_draw_color(self.clear_color);
+        canvas.fill_rect(self.screen_area).ok().unwrap_or_default();
+
+        // Lines
+        self.draw_lines(canvas);
+
+        // Pieces
+        self.draw_pieces(canvas, board);
+    }
+
+    pub fn draw_lines(&self, canvas: &mut Canvas<Window>) {
         canvas.set_draw_color(self.clear_color);
         canvas.fill_rect(self.screen_area).ok().unwrap_or_default();
 
@@ -77,6 +91,38 @@ impl Renderer {
                 )
                 .ok()
                 .unwrap_or_default();
+        }
+    }
+
+    fn draw_pieces(&self, canvas: &mut Canvas<Window>, board: &[[BoardPiece; 5]; 5]) {
+        let width = self.screen_area.w / 5;
+        let height = self.screen_area.h / 5;
+
+        for i in 0i32..5 {
+            let row: usize = i.try_into().unwrap();
+
+            for j in 0i32..5 {
+                let col: usize = j.try_into().unwrap();
+
+                if board[row][col] == BoardPiece::None {
+                    continue;
+                }
+
+                let mut color = Color::RGB(0, 0, 0);
+                if board[row][col] == BoardPiece::Red {
+                    color = Color::RGB(255, 0, 0);
+                }
+
+                let rect = Rect::new(
+                    width / 4 + width * j,
+                    height / 4 + height * i,
+                    (width / 2).try_into().unwrap(),
+                    (height / 2).try_into().unwrap(),
+                );
+
+                canvas.set_draw_color(color);
+                canvas.fill_rect(rect).ok().unwrap_or_default();
+            }
         }
     }
 }

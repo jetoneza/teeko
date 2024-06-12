@@ -3,6 +3,9 @@ use sdl2::{event::Event, pixels::Color, rect::Rect};
 mod view;
 use view::board_view;
 
+mod model;
+use model::game::{make_blank_board, GameState};
+
 fn main() -> Result<(), String> {
     let screen_width: u32 = 800;
     let screen_height: u32 = 600;
@@ -21,6 +24,14 @@ fn main() -> Result<(), String> {
         clear_color: Color::RGB(64, 192, 255),
     };
 
+    let mut game_state = GameState {
+        board: make_blank_board(),
+    };
+
+    game_state.print_board();
+    game_state.jumble_board();
+    game_state.print_board();
+
     let mut running = true;
     let mut event_queue = sdl_context.event_pump().unwrap();
 
@@ -28,17 +39,11 @@ fn main() -> Result<(), String> {
         for event in event_queue.poll_iter() {
             match event {
                 Event::Quit { .. } => running = false,
-                Event::MouseMotion {
-                    x, y, xrel, yrel, ..
-                } => {
-                    println!("Mouse x: {}, y: {}", x, y);
-                    println!("Relative x: {}, y: {}", xrel, yrel);
-                }
                 _ => {}
             }
         }
 
-        board_view.render(&mut canvas);
+        board_view.render(&mut canvas, &game_state.board);
 
         canvas.present();
     }
