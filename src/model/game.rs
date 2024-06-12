@@ -1,4 +1,3 @@
-use sdl2::pixels::PixelFormatEnum;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum BoardPiece {
@@ -28,30 +27,6 @@ impl GameState {
             history: Vec::new(),
             history_pos: 0,
         }
-    }
-
-    pub fn print_board(&self) {
-        let mut label: String;
-
-        for row in 0..5 {
-            for col in 0..5 {
-                match self.board[row][col] {
-                    BoardPiece::None => {
-                        label = "-".to_string();
-                    }
-                    BoardPiece::Red => {
-                        label = "R".to_string();
-                    }
-                    BoardPiece::Black => {
-                        label = "B".to_string();
-                    }
-                };
-
-                print!("{}", label);
-            }
-            println!();
-        }
-        println!();
     }
 
     pub fn handle_click(&mut self, row: usize, col: usize) {
