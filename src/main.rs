@@ -1,5 +1,8 @@
 use sdl2::{event::Event, pixels::Color, rect::Rect};
 
+mod view;
+use view::board_view;
+
 fn main() -> Result<(), String> {
     let screen_width: u32 = 800;
     let screen_height: u32 = 600;
@@ -13,10 +16,10 @@ fn main() -> Result<(), String> {
 
     let mut canvas = window.into_canvas().build().unwrap();
 
-    let screen_area = Rect::new(0, 0, screen_width, screen_height);
-    let clear_color = Color::RGB(64, 192, 255);
-
-    canvas.set_draw_color(clear_color);
+    let board_view = board_view::Renderer {
+        screen_area: Rect::new(0, 0, screen_width, screen_height),
+        clear_color: Color::RGB(64, 192, 255),
+    };
 
     let mut running = true;
     let mut event_queue = sdl_context.event_pump().unwrap();
@@ -35,7 +38,8 @@ fn main() -> Result<(), String> {
             }
         }
 
-        canvas.fill_rect(screen_area)?;
+        board_view.render(&mut canvas);
+
         canvas.present();
     }
 
