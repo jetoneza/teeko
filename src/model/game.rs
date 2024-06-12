@@ -1,12 +1,14 @@
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum BoardPiece {
-    None,
     Red,
     Black,
+    None,
 }
 
 pub struct GameState {
     pub board: [[BoardPiece; 5]; 5],
+    pub current_player: BoardPiece,
+    pub pieces_dropped: [i32; 2],
 }
 
 pub fn make_blank_board() -> [[BoardPiece; 5]; 5] {
@@ -48,6 +50,30 @@ impl GameState {
             return;
         }
 
-        self.board[row][col] = BoardPiece::Red;
+        if self.pieces_dropped[self.index_of_piece(self.current_player)] >= 4 {
+            return;
+        }
+
+        if self.board[row][col] != BoardPiece::None {
+            return;
+        }
+
+        self.board[row][col] = self.current_player;
+
+        self.next_turn();
+    }
+
+    fn next_turn(&mut self) {
+        self.pieces_dropped[self.index_of_piece(self.current_player)] += 1;
+
+        self.current_player = if self.current_player == BoardPiece::Red {
+            BoardPiece::Black
+        } else {
+            BoardPiece::Red
+        };
+    }
+
+    fn index_of_piece(&self, piece: BoardPiece) -> usize {
+        (piece == BoardPiece::Red).try_into().unwrap()
     }
 }
